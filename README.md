@@ -1,5 +1,5 @@
 # RAGsforCyber
-Collection of projects using AI to improve workflows for cyber professionals.
+Collection of projects using AI to improve workflows for cyber practictioners.
 
 First project uses LLM and Langchain to synthesize text output of CSV file. Objective reduce analysts' time spent gathering and analyzing large volumes and data to focus on critical threats.
 
