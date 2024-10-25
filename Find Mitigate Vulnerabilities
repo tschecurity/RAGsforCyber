@@ -1,5 +1,5 @@
 
-#Python script that detects Personally Identifiable Information (PII) vulnerabilities in PDFs stored in Google Colab and mitigates them using Ollama, Langroid, and Langchain.
+#Python script that detects Personally Identifiable Information (PII) vulnerabilities in PDFs stored in Google Colab and mitigates them using Ollama and Langchain.
 
 #Read the PDF: Extract text from the PDF file.
 # Detect PII: Use a simple regex-based approach or leverage a PII detection library.
