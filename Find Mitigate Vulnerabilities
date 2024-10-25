@@ -18,7 +18,64 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text() + '\n'
     return text
 
+# Function to extract text from a PDF file
+def extract_text_from_pdf(pdf_path):
+    with open(pdf_path, "rb") as file:
+        reader = PyPDF2.PdfReader(file)
+        text = ''
+        for page in reader.pages:
+            text += page.extract_text() + '\n'
+    return text
+
 # Function to detect PII in the text
+def detect_pii(text):
+    pii_patterns = {
+        'emails': r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+        # Escaped the hyphen or moved it to the end
+        'phone_numbers': r'\+?[0-9\s\-()]{7,15}',  # or r'\+?[0-9() \s-]{7,15}'
+        'ssn': r'\b\d{3}-\d{2}-\d{4}\b'  # Simple SSN regex
+    }
+    pii_found = {} # Fixed: Removed unexpected indentation
+
+    for pii_type, pattern in pii_patterns.items():
+        matches = re.findall(pattern, text)
+        if matches:
+            pii_found[pii_type] = matches
+
+    return pii_found
+
+# Function to mitigate PII using Langchain and Ollama
+def mitigate_pii(text, pii):
+    # Initialize Langchain's Ollama model (example with a hypothetical endpoint)
+    ollama_model = Ollama(model="llama3.2")
+
+    # Replace detected PII with a placeholder
+    for pii_type, values in pii.items():
+        for value in values:
+            text = text.replace(value, "[REDACTED]")
+
+    # Further processing with Langchain's model
+    response = ollama_model(text)
+
+    return response
+
+# Main function
+def main(pdf_path):
+    text = extract_text_from_pdf(pdf_path)
+    pii = detect_pii(text)
+
+    if pii:
+        print("Detected PII:", pii)
+        mitigated_text = mitigate_pii(text, pii)
+        print("###-###-### Mitigated Text:")
+        print(mitigated_text)
+
+    else:
+        print("No PII detected.")
+
+# Example usage
+pdf_path = '/content/These are the latest vulnerabilities found in docu.pdf'  # Upload your PDF to Colab and provide the path here
+main(pdf_path)
 
 Requirement already satisfied: PyPDF2 in /usr/local/lib/python3.10/dist-packages (3.0.1)
 Requirement already satisfied: langchain in /usr/local/lib/python3.10/dist-packages (0.3.3)
