@@ -180,3 +180,33 @@ If you're looking for general guidance on mitigating access control vulnerabilit
 8. **Implement Data Loss Prevention (DLP) Tools**: Use DLP tools to detect and prevent sensitive data from being exfiltrated or compromised.
 
 For the specific vulnerability you mentioned (####)[####], I recommend consulting the official patch notes and documentation provided by the vendor or a trusted source for guidance on mitigating the issue
+
+
+#Sample of a smaller change to skeleton code to add RAG functionality.
+
+import re
+from typing import List, Tuple
+
+def _words(s: str):
+    return re.findall(r"\w+", s.lower())
+
+class TinyHandRAG:
+    def __init__(self):
+        self.docs: List[str] = []
+        self.doc_words: List[set] = []
+
+    def build(self, docs: List[str]):
+        self.docs = docs
+        self.doc_words = [set(_words(d)) for d in docs]
+
+    def retrieve(self, query: str, k: int = 3) -> List[Tuple[int, str]]:
+        qwords = set(_words(query))
+        scores = []
+        for i, dw in enumerate(self.doc_words):
+            # simple overlap score
+            common = qwords & dw
+            score = len(common) / (1 + len(dw))
+            scores.append((score, i))
+        scores.sort(reverse=True)
+        return [(s, self.docs[i]) for s, i in scores[:k]]
+
